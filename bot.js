@@ -16,7 +16,7 @@ bot.help((ctx) => ctx.reply('Ну я типа ответ на команду /he
 
 bot.command("/add", (ctx) => {
   const { message } = ctx
-  const [command, ...[name, surname, patronymic]] = message.text.split(" ");
+  const [command, ...[surname, name, patronymic]] = message.text.split(" ");
 
   const teacher = new Teacher({
     name,
@@ -32,14 +32,45 @@ bot.command("/add", (ctx) => {
   })
 })
 
+bot.command("/delete", (ctx) => {
+  const { message } = ctx
+  const [command, ...[surname, name, patronymic]] = message.text.split(" ");
+
+  Teacher.deleteOne({ name, surname, patronymic }, (err, teacher) => {
+    if (err) return printError(command, err);
+    ctx.reply(`Преподаватель ${name} ${surname} ${patronymic} был успешно удалён ✅`)
+  })
+
+})
+
 bot.command("/all", (ctx) => {
   Teacher.find((err, teachers) => {
     if (err) return printError("/all", err);
-
     ctx.reply(teachers.reduce((res, { name, surname, patronymic }) => {
-      return res + `* ${name} ${surname} ${patronymic}\n`;
+      return res + `* ${surname} ${name} ${patronymic}\n`;
     }, ""))
-    console.log(teachers);
+  })
+})
+
+bot.command("/teacher", (ctx) => {
+  const { message } = ctx;
+  const [command, ...[surname, name, patronymic]] = message.text.split(" ");
+
+  Teacher.findOne({ name, surname, patronymic }, (err, teacher) => {
+    if (err) return printError(command, err);
+
+    if (teacher) {
+      ctx.replyWithPhoto(
+        {
+          url: "https://picsum.photos/400/400/?random"
+        },
+        {
+          caption: `${teacher.surname} ${teacher.name} ${teacher.patronymic}\nНаучная степень: ${teacher.scienceDegrees}\nДолжность: ${teacher.position}`
+        }
+      )
+    } else {
+      ctx.reply(`Не удалось найти преподавателя (${surname} ${name} ${patronymic})`)
+    }
   })
 })
 
