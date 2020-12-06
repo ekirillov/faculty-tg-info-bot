@@ -1,8 +1,10 @@
-require('dotenv').config()
+require("dotenv").config()
 const mongoose = require('mongoose');
 const Telegraf = require("telegraf");
 const Teacher = require("./models/teacherModel");
 const printError = require("./utils/log");
+const { ERROR_MESSAGE } = require("./utils/constants");
+const { getAllTeachersByDepartmentList, getTeachersInfo } = require("./controllers/teachersController");
 
 const url = "mongodb://localhost:27017/test";
 mongoose.connect(url, { useNewUrlParser: true, useUnifiedTopology: true });
@@ -16,14 +18,15 @@ bot.help((ctx) => ctx.reply('Ну я типа ответ на команду /he
 
 bot.command("/add", (ctx) => {
   const { message } = ctx
-  const [command, ...[surname, name, patronymic]] = message.text.split(" ");
+  const [command, ...[surname, name, patronymic, department]] = message.text.split(" ");
 
   const teacher = new Teacher({
     name,
     surname,
     patronymic,
     scienceDegrees: ["кандидат педагогических наук"],
-    position: ["доцент"]
+    positions: ["доцент"],
+    department: department
   });
 
   teacher.save((err, newTeacher) => {
@@ -43,41 +46,34 @@ bot.command("/delete", (ctx) => {
 
 })
 
-bot.command("/all", (ctx) => {
-  Teacher.find((err, teachers) => {
-    if (err) return printError("/all", err);
-    ctx.reply(teachers.reduce((res, { name, surname, patronymic }) => {
-      return res + `* ${surname} ${name} ${patronymic}\n`;
-    }, ""))
-  })
+bot.command("/teachers", async (ctx) => {
+  try {
+    ctx.reply(await getAllTeachersByDepartmentList(), { parse_mode: "html" })
+  } catch (error) {
+    console.error(error)
+    ctx.reply(ERROR_MESSAGE)
+  }
 })
 
-bot.command("/teacher", (ctx) => {
+bot.command("/teacher", async (ctx) => {
   const { message } = ctx;
-  const [command, ...[surname, name, patronymic]] = message.text.split(" ");
+  const [command, ...[nameParam1, nameParam2, nameParam3]] = message.text.split(" ");
 
-  Teacher.findOne({ name, surname, patronymic }, (err, teacher) => {
-    if (err) return printError(command, err);
+  const { text, imageLink } = await getTeachersInfo(nameParam1, nameParam2, nameParam3);
 
-    if (teacher) {
-      ctx.replyWithPhoto(
-        {
-          url: "https://picsum.photos/400/400/?random"
-        },
-        {
-          caption: `${teacher.surname} ${teacher.name} ${teacher.patronymic}\nНаучная степень: ${teacher.scienceDegrees}\nДолжность: ${teacher.position}`
-        }
-      )
-    } else {
-      ctx.reply(`Не удалось найти преподавателя (${surname} ${name} ${patronymic})`)
-    }
-  })
+  if (imageLink) {
+    ctx.replyWithPhoto(
+      {
+        url: imageLink
+      },
+      {
+        caption: text,
+        parse_mode: "html"
+      }
+    )
+  } else {
+    ctx.reply(text, { parse_mode: "html" })
+  }
 })
 
 bot.launch()
-
-// console.log("launched...")
-
-// process.on("SIGINT", () => {
-//   process.exit();
-// });

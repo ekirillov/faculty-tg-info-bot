@@ -7,8 +7,21 @@ const TeacherSchema = new Schema({
   surname: String,
   patronymic: String,
   scienceDegrees: [String],
-  position: [String]
+  positions: [String],
+  department: String
 });
+
+TeacherSchema.methods.getFullName = function () {
+  return `${this.surname} ${this.name} ${this.patronymic}`;
+};
+
+TeacherSchema.methods.getStatus = function () {
+  return `${this.positions}, ${this.scienceDegrees}`;
+};
+
+TeacherSchema.methods.toString = function () {
+  return `${this.getFullName()} - ${this.getStatus()}`;
+};
 
 const Teacher = mongoose.model('teacher', TeacherSchema);
 
