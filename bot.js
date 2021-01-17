@@ -1,10 +1,17 @@
 require("dotenv").config()
 const mongoose = require('mongoose');
-const Telegraf = require("telegraf");
+const { Telegraf, Markup } = require("telegraf");
 const Teacher = require("./models/teacherModel");
 const printError = require("./utils/log");
 const { ERROR_MESSAGE } = require("./utils/constants");
-const { getAllTeachersByDepartmentList, getTeachersInfo } = require("./controllers/teachersController");
+const {
+  getAllTeachersByDepartmentList,
+  getTeachersInfo,
+  getAllTeachersGroupedByDeparment,
+  getTeacherById
+} = require("./controllers/teachersController");
+
+const PRINT_TEACHER_INFO = "printTeacherInfo"
 
 const url = "mongodb://localhost:27017/test";
 mongoose.connect(url, { useNewUrlParser: true, useUnifiedTopology: true });
@@ -72,8 +79,69 @@ bot.command("/teacher", async (ctx) => {
       }
     )
   } else {
-    ctx.reply(text, { parse_mode: "html" })
+    ctx.reply()
   }
 })
+
+const generageTeachersInlineKeyboard = (teachersByDeparment) => {
+
+  const getTeacherButtons = (teachers) => {
+    return [
+      // TODO: form response
+      // === | ===
+      // === | ===
+      // === | 000
+      teachers.map(({ name, surname, _id }) => ({ text: `${name} ${surname}`, callback_data: `${PRINT_TEACHER_INFO}_${_id}` }))
+      // [
+      //   { text: "test", callback_data: "pepega" },
+      //   { text: "test", callback_data: "pepega" }
+      // ],
+      // [
+      //   { text: "test", callback_data: "pepega" },
+      //   { text: "test", callback_data: "pepega" }
+      // ]
+    ]
+  }
+
+  return Object.entries(teachersByDeparment).reduce((res, [department, teachers]) => (
+    [
+      ...res,
+      [{ text: `Кафедра ${department.toLowerCase()}`, callback_data: "pepega" }],
+      ...getTeacherButtons(teachers)
+    ]
+  ), [])
+}
+
+bot.command("/getall", async ctx => {
+  const teachersGroupedByDepartment = await getAllTeachersGroupedByDeparment();
+  ctx.reply("Список преподавателей", {
+    reply_markup: {
+      inline_keyboard: generageTeachersInlineKeyboard(teachersGroupedByDepartment)
+    }
+  })
+})
+
+bot.on('callback_query', async (ctx) => {
+  const callbackData = ctx.update.callback_query.data;
+  if (callbackData.includes(PRINT_TEACHER_INFO)) {
+    const teacherId = callbackData.split("_")[1];
+    const teacher = await getTeacherById(teacherId)
+    await ctx.replyWithPhoto(
+      {
+        url: "https://picsum.photos/400/400/?random"
+      },
+      {
+        caption:
+          `<b>${teacher.getFullName()}</b>\n` +
+          `Кафедра: ${teacher.department}\n` +
+          `Научная степень: ${teacher.scienceDegrees}\n` +
+          `Должность: ${teacher.positions}`,
+        parse_mode: "html"
+      }
+    )
+  }
+  await ctx.answerCbQuery()
+});
+
 
 bot.launch()

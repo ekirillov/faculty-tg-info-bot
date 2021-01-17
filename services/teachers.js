@@ -32,5 +32,17 @@ const findTeachers = async (nameParam1, nameParam2, nameParam3) => {
   }
 }
 
+const getById = async (id) => {
+  try {
+    const teacher = await Teacher.findById(id).exec()
+    return teacher;
+  }
+  catch (err) {
+    console.error(`Couldn't find a teacher with "${id}" id\n `, err)
+  }
+}
+
+
 exports.getAll = getAll;
 exports.findTeachers = findTeachers;
+exports.getById = getById;

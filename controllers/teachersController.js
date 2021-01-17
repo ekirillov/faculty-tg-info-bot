@@ -1,4 +1,4 @@
-const { getAll, findTeachers } = require("../services/teachers");
+const { getAll, findTeachers, getById } = require("../services/teachers");
 const _ = require("lodash");
 const { COULD_NOT_FIND_ANYTHING } = require("../utils/constants");
 
@@ -23,6 +23,13 @@ const getAllTeachersByDepartmentList = async () => {
   const teachers = await getAll()
   return formListOfTeachersByDepartment(teachers)
 }
+
+const getAllTeachersGroupedByDeparment = async () => {
+  const teachers = await getAll();
+  return groupByDepartment(teachers)
+}
+
+const getTeacherById = async (id) => await getById(id)
 
 /**
  * 
@@ -50,4 +57,6 @@ const getTeachersInfo = async (nameParam1, nameParam2, nameParam3) => {
 }
 
 exports.getAllTeachersByDepartmentList = getAllTeachersByDepartmentList;
+exports.getAllTeachersGroupedByDeparment = getAllTeachersGroupedByDeparment;
 exports.getTeachersInfo = getTeachersInfo;
+exports.getTeacherById = getTeacherById;
