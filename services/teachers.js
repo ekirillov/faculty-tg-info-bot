@@ -42,7 +42,6 @@ const getById = async (id) => {
   }
 }
 
-
 exports.getAll = getAll;
 exports.findTeachers = findTeachers;
 exports.getById = getById;

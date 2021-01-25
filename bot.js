@@ -10,16 +10,69 @@ const {
   getAllTeachersGroupedByDeparment,
   getTeacherById
 } = require("./controllers/teachersController");
+const {
+  create: createDeparment,
+  getAll: getAllDepartments
+} = require("./controllers/departmentsController");
 
 const PRINT_TEACHER_INFO = "printTeacherInfo"
 
-const url = "mongodb://localhost:27017/test";
-mongoose.connect(url, { useNewUrlParser: true, useUnifiedTopology: true });
+mongoose.connect(process.env.CONNECTION_STRING, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true
+});
 const db = mongoose.connection
 
 const bot = new Telegraf(process.env.BOT_TOKEN);
 
-bot.start((ctx) => ctx.reply('Приветственное сообщение'))
+const TEACHERS = "Преподаватели"
+const DEPARTMENTS = "Кафедры";
+
+bot.start((ctx) => ctx.reply('Приветственное сообщение', {
+  reply_markup: {
+    keyboard: [
+      [{ text: TEACHERS }, { text: DEPARTMENTS }],
+      [{ text: "Контакты" }]
+    ],
+    resize_keyboard: true
+  }
+}))
+
+const replyWithTeachersInlineKeyboard = async (ctx) => {
+  const teachersGroupedByDepartment = await getAllTeachersGroupedByDeparment();
+  ctx.reply("Список преподавателей", {
+    reply_markup: {
+      inline_keyboard: generageTeachersInlineKeyboard(teachersGroupedByDepartment)
+    }
+  })
+}
+
+const replyWithDepartmentsInlineKeyboard = (ctx) => {
+  ctx.reply("Список кафедр", {
+    reply_markup: {
+      inline_keyboard: [
+        [{ text: "Кафедра 1", callback_data: "1" }],
+        [{ text: "Кафедра 2", callback_data: "2" }],
+        [{ text: "Кафедра 3", callback_data: "3" }]
+      ]
+    }
+  })
+}
+
+bot.on("text", async (ctx, next) => {
+  const { text } = ctx.message
+
+  switch (text) {
+    case TEACHERS:
+      await replyWithTeachersInlineKeyboard(ctx)
+      break;
+    case DEPARTMENTS:
+      await replyWithDepartmentsInlineKeyboard(ctx)
+    default:
+      break;
+  }
+  next()
+})
 
 bot.help((ctx) => ctx.reply('Ну я типа ответ на команду /help. Звал? Че нада?'))
 
@@ -33,12 +86,26 @@ bot.command("/add", (ctx) => {
     patronymic,
     scienceDegrees: ["кандидат педагогических наук"],
     positions: ["доцент"],
-    department: department
+    department: "Менеджмента",
+    departmentLink: "600dcae1462570343aa739b3"
   });
 
   teacher.save((err, newTeacher) => {
     if (err) return printError(command, err);
     ctx.reply(`Преподаватель ${name} ${surname} ${patronymic} был успешно добавлен ✅`)
+  })
+})
+
+bot.command("/get_deps", async (ctx) => {
+  const deps = await getAllDepartments();
+  console.log(deps)
+})
+
+bot.command("/add_dep", (ctx) => {
+  createDeparment({
+    name: "Кафедра тестов",
+    history: "История кафедры тестов",
+    philosophy: "Философия кафедры тестов"
   })
 })
 
@@ -53,7 +120,7 @@ bot.command("/delete", (ctx) => {
 
 })
 
-bot.command("/teachers", async (ctx) => {
+bot.command("/teachers_list", async (ctx) => {
   try {
     ctx.reply(await getAllTeachersByDepartmentList(), { parse_mode: "html" })
   } catch (error) {
@@ -79,7 +146,7 @@ bot.command("/teacher", async (ctx) => {
       }
     )
   } else {
-    ctx.reply()
+    ctx.reply(text, { parse_mode: "html" })
   }
 })
 
@@ -106,20 +173,13 @@ const generageTeachersInlineKeyboard = (teachersByDeparment) => {
   return Object.entries(teachersByDeparment).reduce((res, [department, teachers]) => (
     [
       ...res,
-      [{ text: `Кафедра ${department.toLowerCase()}`, callback_data: "pepega" }],
+      [{ text: `Кафедра ${department.toLowerCase()}`, callback_data: "do-nothing" }],
       ...getTeacherButtons(teachers)
     ]
   ), [])
 }
 
-bot.command("/getall", async ctx => {
-  const teachersGroupedByDepartment = await getAllTeachersGroupedByDeparment();
-  ctx.reply("Список преподавателей", {
-    reply_markup: {
-      inline_keyboard: generageTeachersInlineKeyboard(teachersGroupedByDepartment)
-    }
-  })
-})
+bot.command("/teachers", async ctx => await replyWithTeachersInlineKeyboard(ctx))
 
 bot.on('callback_query', async (ctx) => {
   const callbackData = ctx.update.callback_query.data;
@@ -128,7 +188,7 @@ bot.on('callback_query', async (ctx) => {
     const teacher = await getTeacherById(teacherId)
     await ctx.replyWithPhoto(
       {
-        url: "https://picsum.photos/400/400/?random"
+        url: "https://picsum.photos/200/200/?random"
       },
       {
         caption:

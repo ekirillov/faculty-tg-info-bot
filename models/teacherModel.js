@@ -3,12 +3,17 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const TeacherSchema = new Schema({
+  _id: Schema.Types.ObjectId,
   name: String,
   surname: String,
   patronymic: String,
   scienceDegrees: [String],
   positions: [String],
-  department: String
+  department: String,
+  departmentLink: {
+    type: Schema.Types.ObjectId,
+    ref: "department"
+  }
 });
 
 TeacherSchema.methods.getFullName = function () {
@@ -23,6 +28,4 @@ TeacherSchema.methods.toString = function () {
   return `${this.getFullName()} - ${this.getStatus()}`;
 };
 
-const Teacher = mongoose.model('teacher', TeacherSchema);
-
-module.exports = Teacher;
+module.exports = mongoose.model('teacher', TeacherSchema);
