@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+import mongoose from 'mongoose';
 
 const Schema = mongoose.Schema;
 
@@ -28,4 +28,4 @@ TeacherSchema.methods.toString = function () {
   return `${this.getFullName()} - ${this.getStatus()}`;
 };
 
-module.exports = mongoose.model('teacher', TeacherSchema);
+export default mongoose.model('teacher', TeacherSchema);

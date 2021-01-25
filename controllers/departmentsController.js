@@ -1,8 +1,33 @@
-const { create: createDeparment, getAll: getAllDepartments } = require("../services/departments");
+import Department from "../models/departmentModel.js";
 
-const create = (params) => createDeparment(params)
+const departmentsController = () => {
+  const create = ({
+    name,
+    history,
+    philosophy
+  }) => {
+    const department = new Department({
+      name,
+      history,
+      philosophy
+    });
+    department.save()
+  }
 
-const getAll = async () => await getAllDepartments()
+  const getAll = async () => {
+    try {
+      const departments = await Department.find().exec()
+      return departments;
+    }
+    catch (err) {
+      console.error("Couldn't get all departments\n ", err)
+    }
+  }
 
-exports.create = create;
-exports.getAll = getAll;
+  return Object.freeze({
+    create,
+    getAll
+  })
+}
+
+export default departmentsController

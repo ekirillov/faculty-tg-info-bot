@@ -1,19 +1,26 @@
-require("dotenv").config()
-const mongoose = require('mongoose');
-const { Telegraf, Markup } = require("telegraf");
-const Teacher = require("./models/teacherModel");
-const printError = require("./utils/log");
-const { ERROR_MESSAGE } = require("./utils/constants");
+import { config } from "dotenv";
+import mongoose from "mongoose";
+import { Telegraf } from "telegraf";
+import Teacher from "./models/teacherModel.js";
+import printError from "./utils/log.js";
+import { ERROR_MESSAGE } from "./utils/constants.js";
+import teachersController from "./controllers/teachersController.js";
+import departmentsController from "./controllers/departmentsController.js";
+
+// Call config to use process.env
+config()
+
 const {
   getAllTeachersByDepartmentList,
-  getTeachersInfo,
   getAllTeachersGroupedByDeparment,
+  getTeachersInfo,
   getTeacherById
-} = require("./controllers/teachersController");
+} = teachersController()
+
 const {
-  create: createDeparment,
-  getAll: getAllDepartments
-} = require("./controllers/departmentsController");
+  getAll: getAllDepartments,
+  create: createDeparment
+} = departmentsController()
 
 const PRINT_TEACHER_INFO = "printTeacherInfo"
 
