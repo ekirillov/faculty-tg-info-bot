@@ -68,7 +68,7 @@ const teachersController = () => {
     return formListOfTeachersByDepartment(teachers)
   }
 
-  const getAllTeachersGroupedByDeparment = async () => {
+  const getAllTeachersGroupedByDepartment = async () => {
     const teachers = await getAll();
     return groupByDepartment(teachers)
   }
@@ -96,7 +96,7 @@ const teachersController = () => {
 
   return Object.freeze({
     getAllTeachersByDepartmentList,
-    getAllTeachersGroupedByDeparment,
+    getAllTeachersGroupedByDepartment,
     getTeachersInfo,
     getTeacherById
   })

@@ -1,31 +1,31 @@
 import mongoose from 'mongoose';
+import { MODEL_NAMES } from "./utils/constants.js";
 
 const Schema = mongoose.Schema;
 
-const TeacherSchema = new Schema({
+const teacherSchema = new Schema({
   _id: Schema.Types.ObjectId,
   name: String,
   surname: String,
   patronymic: String,
   scienceDegrees: [String],
   positions: [String],
-  department: String,
-  departmentLink: {
+  department: {
     type: Schema.Types.ObjectId,
-    ref: "department"
+    ref: MODEL_NAMES.DEPARTMENT
   }
 });
 
-TeacherSchema.methods.getFullName = function () {
+teacherSchema.methods.getFullName = function () {
   return `${this.surname} ${this.name} ${this.patronymic}`;
 };
 
-TeacherSchema.methods.getStatus = function () {
+teacherSchema.methods.getStatus = function () {
   return `${this.positions}, ${this.scienceDegrees}`;
 };
 
-TeacherSchema.methods.toString = function () {
+teacherSchema.methods.toString = function () {
   return `${this.getFullName()} - ${this.getStatus()}`;
 };
 
-export default mongoose.model('teacher', TeacherSchema);
+export default mongoose.model(MODEL_NAMES.TEACHER, teacherSchema);

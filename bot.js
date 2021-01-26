@@ -1,25 +1,25 @@
 import { config } from "dotenv";
 import mongoose from "mongoose";
 import { Telegraf } from "telegraf";
-import Teacher from "./models/teacherModel.js";
-import printError from "./utils/log.js";
-import { ERROR_MESSAGE } from "./utils/constants.js";
-import teachersController from "./controllers/teachersController.js";
-import departmentsController from "./controllers/departmentsController.js";
+import Teacher from "./src/models/teacherModel.js";
+import printError from "./src/utils/log.js";
+import { ERROR_MESSAGE } from "./src/utils/constants.js";
+import teachersController from "./src/controllers/teachersController.js";
+import departmentsController from "./src/controllers/departmentsController.js";
 
 // Call config to use process.env
 config()
 
 const {
   getAllTeachersByDepartmentList,
-  getAllTeachersGroupedByDeparment,
+  getAllTeachersGroupedByDepartment,
   getTeachersInfo,
   getTeacherById
 } = teachersController()
 
 const {
   getAll: getAllDepartments,
-  create: createDeparment
+  create: createDepartment
 } = departmentsController()
 
 const PRINT_TEACHER_INFO = "printTeacherInfo"
@@ -46,7 +46,7 @@ bot.start((ctx) => ctx.reply('Приветственное сообщение', 
 }))
 
 const replyWithTeachersInlineKeyboard = async (ctx) => {
-  const teachersGroupedByDepartment = await getAllTeachersGroupedByDeparment();
+  const teachersGroupedByDepartment = await getAllTeachersGroupedByDepartment();
   ctx.reply("Список преподавателей", {
     reply_markup: {
       inline_keyboard: generageTeachersInlineKeyboard(teachersGroupedByDepartment)
@@ -109,7 +109,7 @@ bot.command("/get_deps", async (ctx) => {
 })
 
 bot.command("/add_dep", (ctx) => {
-  createDeparment({
+  createDepartment({
     name: "Кафедра тестов",
     history: "История кафедры тестов",
     philosophy: "Философия кафедры тестов"
