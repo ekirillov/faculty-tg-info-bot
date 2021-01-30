@@ -92,9 +92,7 @@ bot.command("/add", (ctx) => {
     surname,
     patronymic,
     scienceDegrees: ["кандидат педагогических наук"],
-    positions: ["доцент"],
-    department: "Менеджмента",
-    departmentLink: "600dcae1462570343aa739b3"
+    positions: ["доцент"]
   });
 
   teacher.save((err, newTeacher) => {

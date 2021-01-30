@@ -4,7 +4,6 @@ import { MODEL_NAMES } from "./utils/constants.js";
 const Schema = mongoose.Schema;
 
 const teacherSchema = new Schema({
-  _id: Schema.Types.ObjectId,
   name: String,
   surname: String,
   patronymic: String,
