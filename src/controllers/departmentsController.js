@@ -1,33 +1,28 @@
 import Department from "../models/departmentModel.js";
 
 const departmentsController = () => {
-  const create = ({
-    name,
-    history,
-    philosophy
-  }) => {
+  const create = ({ name, history, philosophy }) => {
     const department = new Department({
       name,
       history,
-      philosophy
+      philosophy,
     });
-    department.save()
-  }
+    department.save();
+  };
 
   const getAll = async () => {
     try {
-      const departments = await Department.find().exec()
+      const departments = await Department.find().exec();
       return departments;
+    } catch (err) {
+      console.error("Couldn't get all departments\n ", err);
     }
-    catch (err) {
-      console.error("Couldn't get all departments\n ", err)
-    }
-  }
+  };
 
   return Object.freeze({
     create,
-    getAll
-  })
-}
+    getAll,
+  });
+};
 
-export default departmentsController
+export default departmentsController;
