@@ -15,16 +15,4 @@ const teacherSchema = new Schema({
   }
 });
 
-teacherSchema.methods.getFullName = function () {
-  return `${this.surname} ${this.name} ${this.patronymic}`;
-};
-
-teacherSchema.methods.getStatus = function () {
-  return `${this.positions}, ${this.scienceDegrees}`;
-};
-
-teacherSchema.methods.toString = function () {
-  return `${this.getFullName()} - ${this.getStatus()}`;
-};
-
 export default mongoose.model(MODEL_NAMES.TEACHER, teacherSchema);

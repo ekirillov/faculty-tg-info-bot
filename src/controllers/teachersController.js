@@ -2,12 +2,12 @@ import _ from "lodash";
 import { COULD_NOT_FIND_ANYTHING } from "../utils/constants.js";
 import Teacher from "../models/teacherModel.js";
 
-const groupByDepartment = (teachers) => _.groupBy(teachers, "department")
+const groupByDepartment = (teachers) => _.groupBy(teachers, "department.name")
 
 const getDepartmentString = (departmentName) => `Кафедра ${departmentName}`
 
-const getTeachersList = (teachres) => teachres.reduce((list, teacher) => {
-  return `${list}\t> <i>${teacher.getFullName()}</i> - ${teacher.getStatus()}\n`
+const getTeachersList = (teachers) => teachers.reduce((list, teacher) => {
+  return `${list}\t> <i>${teacher.name} ${teacher.surname}</i> - ${teacher.positions}, ${teacher.scienceDegrees}\n`
 }, "\n")
 
 const getAll = async () => {
@@ -69,7 +69,7 @@ const teachersController = () => {
   }
 
   const getAllTeachersGroupedByDepartment = async () => {
-    const teachers = await getAll();
+    const teachers = await Teacher.find().populate("department");
     return groupByDepartment(teachers)
   }
 
@@ -87,18 +87,21 @@ const teachersController = () => {
     }
     const teacher = teachers[0];
     return {
-      text: `<b>${teacher.getFullName()}</b>\nНаучная степень: ${teacher.scienceDegrees}\nДолжность: ${teacher.positions}`,
+      text: `<b>${teacher.name} ${teacher.surname}</b>\nНаучная степень: ${teacher.scienceDegrees}\nДолжность: ${teacher.positions}`,
       imageLink: "https://picsum.photos/400/400/?random"
     }
   }
 
   const getTeacherById = async (id) => await getById(id)
 
+  const getTeacherByIdWithDepartment = async (id) => await Teacher.findById(id).populate("department")
+
   return Object.freeze({
     getAllTeachersByDepartmentList,
     getAllTeachersGroupedByDepartment,
     getTeachersInfo,
-    getTeacherById
+    getTeacherById,
+    getTeacherByIdWithDepartment
   })
 }
 
