@@ -102,6 +102,146 @@ bot.on("text", async (ctx, next) => {
         }
       );
       break;
+    case FIELDS_OF_STUDY:
+      ctx.reply("Направления подготовки", {
+        reply_markup: {
+          inline_keyboard: [
+            [
+              {
+                text: `${DEPARTMENT_EMOJI} Кафедра экономики`,
+                callback_data: "1",
+              },
+            ],
+            [
+              { text: " ", callback_data: "2" },
+              { text: "Бакалавриат", callback_data: "2" },
+              { text: " ", callback_data: "2" },
+            ],
+            [
+              { text: "Очное", callback_data: "3" },
+              { text: "Заочное", callback_data: "3" },
+            ],
+            [
+              { text: "Направление 1", callback_data: "3" },
+              { text: "Направление 2", callback_data: "3" },
+            ],
+            [
+              { text: "Направление 1", callback_data: "3" },
+              { text: "Направление 2", callback_data: "3" },
+            ],
+            [
+              { text: " ", callback_data: "2" },
+              { text: "Магистратура", callback_data: "2" },
+              { text: " ", callback_data: "2" },
+            ],
+            [
+              { text: "Очное", callback_data: "3" },
+              { text: "Заочное", callback_data: "3" },
+            ],
+            [
+              { text: "Направление 1", callback_data: "3" },
+              { text: "Направление 2", callback_data: "3" },
+            ],
+            [
+              { text: "Направление 1", callback_data: "3" },
+              { text: "Направление 2", callback_data: "3" },
+            ],
+            [
+              {
+                text: ` `,
+                callback_data: "1",
+              },
+            ],
+            [
+              {
+                text: `${DEPARTMENT_EMOJI} Кафедра менеджмента`,
+                callback_data: "1",
+              },
+            ],
+            [
+              { text: " ", callback_data: "2" },
+              { text: "Бакалавриат", callback_data: "2" },
+              { text: " ", callback_data: "2" },
+            ],
+            [
+              { text: "Очное", callback_data: "3" },
+              { text: "Заочное", callback_data: "3" },
+            ],
+            [
+              { text: "Направление 1", callback_data: "3" },
+              { text: "Направление 2", callback_data: "3" },
+            ],
+            [
+              { text: "Направление 1", callback_data: "3" },
+              { text: "Направление 2", callback_data: "3" },
+            ],
+            [
+              { text: " ", callback_data: "2" },
+              { text: "Магистратура", callback_data: "2" },
+              { text: " ", callback_data: "2" },
+            ],
+            [
+              { text: "Очное", callback_data: "3" },
+              { text: "Заочное", callback_data: "3" },
+            ],
+            [
+              { text: "Направление 1", callback_data: "3" },
+              { text: "Направление 2", callback_data: "3" },
+            ],
+            [
+              { text: "Направление 1", callback_data: "3" },
+              { text: "Направление 2", callback_data: "3" },
+            ],
+            [
+              {
+                text: ` `,
+                callback_data: "1",
+              },
+            ],
+            [
+              {
+                text: `${DEPARTMENT_EMOJI} Кафедра аналитических и цифровых технологий`,
+                callback_data: "1",
+              },
+            ],
+            [
+              { text: " ", callback_data: "2" },
+              { text: "Бакалавриат", callback_data: "2" },
+              { text: " ", callback_data: "2" },
+            ],
+            [
+              { text: "Очное", callback_data: "3" },
+              { text: "Заочное", callback_data: "3" },
+            ],
+            [
+              { text: "Направление 1", callback_data: "3" },
+              { text: "Направление 2", callback_data: "3" },
+            ],
+            [
+              { text: "Направление 1", callback_data: "3" },
+              { text: "Направление 2", callback_data: "3" },
+            ],
+            [
+              { text: " ", callback_data: "2" },
+              { text: "Магистратура", callback_data: "2" },
+              { text: " ", callback_data: "2" },
+            ],
+            [
+              { text: "Очное", callback_data: "3" },
+              { text: "Заочное", callback_data: "3" },
+            ],
+            [
+              { text: "Направление 1", callback_data: "3" },
+              { text: "Направление 2", callback_data: "3" },
+            ],
+            [
+              { text: "Направление 1", callback_data: "3" },
+              { text: "Направление 2", callback_data: "3" },
+            ],
+          ],
+        },
+      });
+      break;
     default:
       break;
   }
