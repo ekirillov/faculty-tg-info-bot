@@ -6,6 +6,5 @@
 # dependencies
 /node_modules
 
-/scripts
-/data
 /.vscode
+TODO

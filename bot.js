@@ -1,13 +1,8 @@
 import { config } from "dotenv";
 import mongoose from "mongoose";
 import { Telegraf } from "telegraf";
-import Teacher from "./src/models/teacherModel.js";
-import printError from "./src/utils/log.js";
-import { ERROR_MESSAGE } from "./src/utils/constants.js";
 import teachersController from "./src/controllers/teachersController.js";
 import departmentsController from "./src/controllers/departmentsController.js";
-
-// Call config to use process.env
 config();
 
 const {
@@ -18,10 +13,8 @@ const {
   getTeacherByIdWithDepartment,
 } = teachersController();
 
-const {
-  getAll: getAllDepartments,
-  create: createDepartment,
-} = departmentsController();
+const { getAll: getAllDepartments, create: createDepartment } =
+  departmentsController();
 
 const PRINT_TEACHER_INFO = "printTeacherInfo";
 
@@ -35,10 +28,11 @@ const bot = new Telegraf(process.env.BOT_TOKEN);
 
 const DEPARTMENT_EMOJI = "🏫";
 
-const TEACHERS = "Преподаватели";
-const DEPARTMENTS = "Кафедры";
-const CONTACTS = "Контакты";
-const FIELDS_OF_STUDY = "Направления подготовки";
+const TEACHERS = "🧑‍🏫 Преподаватели";
+const DEPARTMENTS = "🏬 Кафедры";
+const CONTACTS = "📇 Контакты";
+const FIELDS_OF_STUDY = "ℹ️ Направления подготовки";
+const DOCUMENTS = "📝 Документы";
 
 bot.start((ctx) =>
   ctx.reply(
@@ -51,6 +45,7 @@ bot.start((ctx) =>
         keyboard: [
           [{ text: TEACHERS }, { text: DEPARTMENTS }],
           [{ text: FIELDS_OF_STUDY }, { text: CONTACTS }],
+          [{ text: DOCUMENTS }],
         ],
         resize_keyboard: true,
       },
@@ -248,48 +243,7 @@ bot.on("text", async (ctx, next) => {
   next();
 });
 
-bot.help((ctx) => ctx.reply("Welcome message"));
-
-bot.command("/get_deps", async (ctx) => {
-  const deps = await getAllDepartments();
-  console.log(deps);
-});
-
-bot.command("/teachers_list", async (ctx) => {
-  try {
-    ctx.reply(await getAllTeachersByDepartmentList(), { parse_mode: "html" });
-  } catch (error) {
-    console.error(error);
-    ctx.reply(ERROR_MESSAGE);
-  }
-});
-
-bot.command("/teacher", async (ctx) => {
-  const { message } = ctx;
-  const [command, ...[nameParam1, nameParam2, nameParam3]] = message.text.split(
-    " "
-  );
-
-  const { text, imageLink } = await getTeachersInfo(
-    nameParam1,
-    nameParam2,
-    nameParam3
-  );
-
-  if (imageLink) {
-    ctx.replyWithPhoto(
-      {
-        url: imageLink,
-      },
-      {
-        caption: text,
-        parse_mode: "html",
-      }
-    );
-  } else {
-    ctx.reply(text, { parse_mode: "html" });
-  }
-});
+bot.help((ctx) => ctx.reply("..."));
 
 const generateTeachersInlineKeyboard = (teachersByDepartment) => {
   const getTeacherButtons = (teachers) => {
@@ -342,11 +296,6 @@ const generateTeachersInlineKeyboard = (teachersByDepartment) => {
     []
   );
 };
-
-bot.command(
-  "/teachers",
-  async (ctx) => await replyWithTeachersInlineKeyboard(ctx)
-);
 
 bot.on("callback_query", async (ctx) => {
   const callbackData = ctx.update.callback_query.data;
