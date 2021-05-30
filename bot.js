@@ -5,18 +5,12 @@ import teachersController from "./src/controllers/teachersController.js";
 import departmentsController from "./src/controllers/departmentsController.js";
 config();
 
-const {
-  getAllTeachersByDepartmentList,
-  getAllTeachersGroupedByDepartment,
-  getTeachersInfo,
-  getTeacherById,
-  getTeacherByIdWithDepartment,
-} = teachersController();
+const { getAllTeachersGroupedByDepartment, getTeacherByIdWithDepartment } =
+  teachersController();
 
 const {
   getAll: getAllDepartments,
   getByIdWithChairman: getDepartmentByIdWithChairMan,
-  create: createDepartment,
 } = departmentsController();
 
 const PRINT_TEACHER_INFO = "printTeacherInfo";
@@ -26,7 +20,6 @@ mongoose.connect(process.env.CONNECTION_STRING, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 });
-const db = mongoose.connection;
 
 const bot = new Telegraf(process.env.BOT_TOKEN);
 
