@@ -19,9 +19,21 @@ const departmentsController = () => {
     }
   };
 
+  const getByIdWithChairman = async (id) => {
+    try {
+      const department = await Department.findById(id)
+        .populate("chairman")
+        .exec();
+      return department;
+    } catch (err) {
+      console.error("Couldn't get department by id\n ", err);
+    }
+  };
+
   return Object.freeze({
     create,
     getAll,
+    getByIdWithChairman,
   });
 };
 

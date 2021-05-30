@@ -2,107 +2,109 @@ import _ from "lodash";
 import { COULD_NOT_FIND_ANYTHING } from "../utils/constants.js";
 import Teacher from "../models/teacherModel.js";
 
-const groupByDepartment = (teachers) => _.groupBy(teachers, "department.name")
+const groupByDepartment = (teachers) => _.groupBy(teachers, "department.name");
 
-const getDepartmentString = (departmentName) => `Кафедра ${departmentName}`
+const getDepartmentString = (departmentName) => `Кафедра ${departmentName}`;
 
-const getTeachersList = (teachers) => teachers.reduce((list, teacher) => {
-  return `${list}\t> <i>${teacher.name} ${teacher.surname}</i> - ${teacher.positions}, ${teacher.scienceDegrees}\n`
-}, "\n")
+const getTeachersList = (teachers) =>
+  teachers.reduce((list, teacher) => {
+    return `${list}\t> <i>${teacher.name} ${teacher.surname}</i> - ${teacher.positions}, ${teacher.scienceDegrees}\n`;
+  }, "\n");
 
 const getAll = async () => {
   try {
-    const teachers = await Teacher.find().exec()
+    const teachers = await Teacher.find().exec();
     return teachers;
+  } catch (err) {
+    console.error("Couldn't get all teacher\n ", err);
   }
-  catch (err) {
-    console.error("Couldn't get all teacher\n ", err)
-  }
-}
+};
 
 const findTeachers = async (nameParam1, nameParam2, nameParam3) => {
   const getConditionArray = (params) => {
     return params.reduce((res, value) => {
-      return !!value ? [
-        ...res,
-        { name: value },
-        { surname: value },
-        { patronymic: value }
-      ] : res
-    }, [])
-  }
+      return !!value
+        ? [...res, { name: value }, { surname: value }, { patronymic: value }]
+        : res;
+    }, []);
+  };
 
   try {
     const teachers = await Teacher.find({
-      $or: getConditionArray([nameParam1, nameParam2, nameParam3])
+      $or: getConditionArray([nameParam1, nameParam2, nameParam3]),
     }).exec();
     return teachers;
   } catch (err) {
-    console.error("Couldn't find teachers\n ", err)
+    console.error("Couldn't find teachers\n ", err);
   }
-}
+};
 
 const getById = async (id) => {
   try {
-    const teacher = await Teacher.findById(id).exec()
+    const teacher = await Teacher.findById(id).exec();
     return teacher;
+  } catch (err) {
+    console.error(`Couldn't find a teacher with "${id}" id\n `, err);
   }
-  catch (err) {
-    console.error(`Couldn't find a teacher with "${id}" id\n `, err)
-  }
-}
+};
 
 const formListOfTeachersByDepartment = (teachersArray) => {
+  const teachersGroupedByDepartment = groupByDepartment(teachersArray);
 
-  const teachersGroupedByDepartment = groupByDepartment(teachersArray)
-
-  return Object.entries(teachersGroupedByDepartment).reduce((result, [departmentName, teachers]) => {
-    return `${result}<b>${getDepartmentString(departmentName)}</b>${getTeachersList(teachers)}\n`
-  }, "")
-}
+  return Object.entries(teachersGroupedByDepartment).reduce(
+    (result, [departmentName, teachers]) => {
+      return `${result}<b>${getDepartmentString(
+        departmentName
+      )}</b>${getTeachersList(teachers)}\n`;
+    },
+    ""
+  );
+};
 
 const teachersController = () => {
-
   const getAllTeachersByDepartmentList = async () => {
-    const teachers = await getAll()
-    return formListOfTeachersByDepartment(teachers)
-  }
+    const teachers = await getAll();
+    return formListOfTeachersByDepartment(teachers);
+  };
 
   const getAllTeachersGroupedByDepartment = async () => {
     const teachers = await Teacher.find().populate("department");
-    return groupByDepartment(teachers)
-  }
+    return groupByDepartment(teachers);
+  };
 
   const getTeachersInfo = async (nameParam1, nameParam2, nameParam3) => {
     const teachers = await findTeachers(nameParam1, nameParam2, nameParam3);
     if (_.isEmpty(teachers)) {
       return {
-        text: COULD_NOT_FIND_ANYTHING
-      }
+        text: COULD_NOT_FIND_ANYTHING,
+      };
     }
     if (teachers.length > 1) {
       return {
-        text: `Было найдено несколько преподавателей. Пожалуйста, уточните запрос.\n\n${formListOfTeachersByDepartment(teachers)}`
-      }
+        text: `Было найдено несколько преподавателей. Пожалуйста, уточните запрос.\n\n${formListOfTeachersByDepartment(
+          teachers
+        )}`,
+      };
     }
     const teacher = teachers[0];
     return {
       text: `<b>${teacher.name} ${teacher.surname}</b>\nНаучная степень: ${teacher.scienceDegrees}\nДолжность: ${teacher.positions}`,
-      imageLink: "https://picsum.photos/400/400/?random"
-    }
-  }
+      imageLink: "https://picsum.photos/400/400/?random",
+    };
+  };
 
-  const getTeacherById = async (id) => await getById(id)
+  const getTeacherById = async (id) => await getById(id);
 
-  const getTeacherByIdWithDepartment = async (id) => await Teacher.findById(id).populate("department")
+  const getTeacherByIdWithDepartment = async (id) =>
+    await Teacher.findById(id).populate("department");
 
   return Object.freeze({
     getAllTeachersByDepartmentList,
     getAllTeachersGroupedByDepartment,
     getTeachersInfo,
     getTeacherById,
-    getTeacherByIdWithDepartment
-  })
-}
+    getTeacherByIdWithDepartment,
+  });
+};
 
-export default teachersController
+export default teachersController;
