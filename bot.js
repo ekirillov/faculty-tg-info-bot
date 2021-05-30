@@ -251,8 +251,10 @@ bot.on("callback_query", async (ctx) => {
         caption:
           `<b>${teacher.surname} ${teacher.name} ${teacher.patronymic}</b>\n` +
           `${teacher.department.name}\n` +
-          `Научная степень: ${teacher.scienceDegrees}\n` +
-          `Должность: ${teacher.positions}`,
+          `Научная степень: ${
+            teacher.scienceDegrees.length !== 0 ? teacher.scienceDegrees : "—"
+          }\n` +
+          `Должность: ${teacher.positions.join(", ")}`,
         parse_mode: "html",
       }
     );
