@@ -160,17 +160,7 @@ const departmentOfManagementTeachers = [
     positions: ["доцент"],
     gender: "m",
     department: "Кафедра менеджмента",
-    img: "http://www.smolgu.ru/upload/iblock/c51/c51e306a17713355eef4dd5639972534.jpg",
-  },
-  {
-    name: "Виталий",
-    surname: "Филинов",
-    patronymic: "Александрович",
-    scienceDegrees: ["кандидат экономических наук"],
-    positions: ["доцент"],
-    gender: "m",
-    department: "Кафедра менеджмента",
-    img: "http://www.smolgu.ru/upload/iblock/c51/c51e306a17713355eef4dd5639972534.jpg",
+    img: "http://www.smolgu.ru/upload/iblock/790/7909a046f4b9e95d415a8296ddb05ca9.jpg",
   },
 ];
 
@@ -304,16 +294,6 @@ const departmentOfEconomicsTeachers = [
     gender: "f",
     department: "Кафедра экономики",
     img: "http://www.smolgu.ru/upload/iblock/a18/a18392cdc00cc26c96ea4ae4854bcc1c.jpg",
-  },
-  {
-    name: "Татьяна",
-    surname: "Шевцова",
-    patronymic: "Павловна",
-    scienceDegrees: ["кандидат экономических наук"],
-    positions: ["доцент"],
-    gender: "f",
-    department: "Кафедра экономики",
-    img: "http://www.smolgu.ru/upload/iblock/b5f/b5fce6886fa49ebda46bcb68ab4fbd65.jpg",
   },
   {
     name: "Татьяна",

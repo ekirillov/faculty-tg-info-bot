@@ -270,7 +270,7 @@ bot.on("callback_query", async (ctx) => {
 
     const getChairmanDescription = () => {
       const genderEmoji = getGenderEmoji(chairmanGender);
-      const chairmanNameFullName = `${chairmanName} ${chairmanSurname} ${chairmanPatronymic}`;
+      const chairmanNameFullName = `${chairmanSurname} ${chairmanName} ${chairmanPatronymic}`;
       const chairmanPositionsString = chairmanPositions.join(", ");
       const chairmanScienceDegreesString = chairmanScienceDegrees.join(", ");
 
